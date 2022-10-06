@@ -7,17 +7,22 @@ function App() {
   const [room, setRoom] = React.useState("");
   const [receiveMes, setReceiveMes] = React.useState([]);
   const [name, setName] = React.useState("");
+  const [status, setStatus] = React.useState("fail");
 
   React.useEffect(() => {
     socket.on("receive-mes", (data) => {
       setReceiveMes((prev) => [...prev, data]);
     });
+    socket.on("receive-status", (data) => {
+      console.log(data);
+      setStatus(data);
+    });
   }, [socket]);
 
-  console.log(receiveMes);
+  console.log(status);
   const onClickSend = () => {
     socket.emit("send-chat", { mes, room, name });
-    setMes("")
+    setMes("");
   };
 
   const onClickJoin = () => {
@@ -28,8 +33,7 @@ function App() {
 
   return (
     <div>
-       Name: <input value={name} onChange={(e) => setName(e.target.value)} />
-      
+      Name: <input value={name} onChange={(e) => setName(e.target.value)} />
       <br />
       Room: <input value={room} onChange={(e) => setRoom(e.target.value)} />
       <button type="submit" onClick={onClickJoin}>
@@ -41,11 +45,13 @@ function App() {
         Send
       </button>
       <br />
+      Status: {status}
+      <br />
       Room:{room}
-      <br/>
+      <br />
       Name:{name}
-      <br/>
-      Message: 
+      <br />
+      Message:
       {receiveMes?.map((data, index) => (
         <Fragment key={index}>
           <p>
